@@ -15,8 +15,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // setup CORS - allow requests from frontend
+const allowedOrigins = [
+  'http://localhost:5174',
+  process.env.FRONTEND_URL?.replace(/\/$/, ''),
+].filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5174',
+  origin: (origin, callback) => {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    if (allowedOrigins.includes(normalizedOrigin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Not allowed by CORS: ${origin}`));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -24,7 +41,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-console.log('CORS enabled for:', process.env.FRONTEND_URL || 'http://localhost:5174');
+console.log('CORS enabled for origins:', allowedOrigins.join(', '));
 
 // routes
 app.use('/api/auth', authRoutes);
