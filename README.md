@@ -82,4 +82,3 @@ Check the README files in `server/` and `client/` for specific setup issues.
 
 ---
 
-Happy coding! 🚀
