@@ -204,7 +204,9 @@ export default function Dashboard() {
         </div>
         <div className="stat-card">
           <h3>Email Verified</h3>
-          <p className="stat-value">✓ Yes</p>
+          <p className="stat-value">
+            {userData.emailVerified ? '✓ Yes' : '✗ No'}
+          </p>
         </div>
         <div className="stat-card">
           <h3>Last Login</h3>
@@ -212,12 +214,32 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {!userData.emailVerified && (
+        <div className="verify-email-card">
+          <p>Your email is not verified yet. Verify now to secure your account.</p>
+          <button className="btn btn-primary" onClick={async () => {
+            try {
+              const response = await userAPI.verifyEmail();
+              setUserData(response.data.user);
+              setStatusMsg('Email verified successfully');
+              setIsError(false);
+            } catch (err) {
+              console.error('Error verifying email:', err);
+              setStatusMsg(err.response?.data?.message || 'Could not verify email');
+              setIsError(true);
+            }
+          }}>
+            Verify Email
+          </button>
+        </div>
+      )}
+
       <div className="tips-section">
         <h3>Quick Tips</h3>
         <ul>
-          <li>Keep your profile information up to date</li>
-          <li>Use a strong password for security</li>
-          <li>Logout when using shared devices</li>
+          <li>Verify your email after login to keep your account secure.</li>
+          <li>Update your profile details so your internship submission stays accurate.</li>
+          <li>Remember to logout when using shared or public devices.</li>
         </ul>
       </div>
     </div>

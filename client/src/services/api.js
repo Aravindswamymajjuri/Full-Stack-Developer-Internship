@@ -44,6 +44,7 @@ export const authAPI = {
 export const userAPI = {
   getProfile: () => apiClient.get('/user/profile'),
   updateProfile: (data) => apiClient.put('/user/profile', data),
+  verifyEmail: () => apiClient.post('/user/verify-email'),
 };
 
 export default apiClient;

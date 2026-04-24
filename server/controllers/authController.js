@@ -51,6 +51,7 @@ exports.signup = async (req, res) => {
         id: newUser._id,
         name: newUser.name,
         email: newUser.email,
+        emailVerified: newUser.emailVerified,
       },
     });
   } catch (error) {
@@ -93,6 +94,7 @@ exports.login = async (req, res) => {
         id: userRecord._id,
         name: userRecord.name,
         email: userRecord.email,
+        emailVerified: userRecord.emailVerified,
       },
     });
   } catch (error) {

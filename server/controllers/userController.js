@@ -17,6 +17,7 @@ exports.getUserProfile = async (req, res) => {
         id: userRecord._id,
         name: userRecord.name,
         email: userRecord.email,
+        emailVerified: userRecord.emailVerified,
         memberSince: userRecord.createdAt,
       },
     });
@@ -39,7 +40,12 @@ exports.updateUserProfile = async (req, res) => {
 
     // only update provided fields
     if (name) userRecord.name = name;
-    if (email) userRecord.email = email;
+    if (email) {
+      if (email !== userRecord.email) {
+        userRecord.emailVerified = false;
+      }
+      userRecord.email = email;
+    }
 
     await userRecord.save();
     console.log('Profile updated for user:', userId);
@@ -51,10 +57,39 @@ exports.updateUserProfile = async (req, res) => {
         id: userRecord._id,
         name: userRecord.name,
         email: userRecord.email,
+        emailVerified: userRecord.emailVerified,
       },
     });
   } catch (error) {
     console.error('Error updating profile:', error.message);
     res.status(500).json({ message: 'Could not update profile' });
+  }
+};
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const userRecord = await User.findById(userId);
+
+    if (!userRecord) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    userRecord.emailVerified = true;
+    await userRecord.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Email verified successfully',
+      user: {
+        id: userRecord._id,
+        name: userRecord.name,
+        email: userRecord.email,
+        emailVerified: userRecord.emailVerified,
+      },
+    });
+  } catch (error) {
+    console.error('Error verifying email:', error.message);
+    res.status(500).json({ message: 'Could not verify email' });
   }
 };
