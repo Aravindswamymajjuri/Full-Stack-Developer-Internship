@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // setup CORS - allow requests from frontend
 const allowedOrigins = [
+  'http://localhost:5173',
   'http://localhost:5174',
   process.env.FRONTEND_URL?.replace(/\/$/, ''),
 ].filter(Boolean);
